@@ -51,7 +51,7 @@ NerdaxeGamma::NerdaxeGamma() : NerdAxe() {
 #ifdef NERDAXEGAMMA
     m_theme = new ThemeNerdaxegamma();
 #endif
-    m_asics = new BM1370();
+    m_asics = new BM1370(m_asicCount);
 }
 
 

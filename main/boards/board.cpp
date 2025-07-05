@@ -8,12 +8,13 @@
 
 const static char* TAG = "board";
 
-Board::Board() {
+Board::Board() :
     // afc settings
-    m_afcMinTemp = 45.0f;
-    m_afcMinFanSpeed = 35.0f;
-    m_afcMaxTemp = 65.0f;
-    m_fanAutoPolarity = true; // default detect polarity
+    m_fanAutoPolarity{ true }, // default detect polarity
+    m_afcMinTemp{ 45.0f },
+    m_afcMinFanSpeed{ 35.0f },
+    m_afcMaxTemp{ 65.0f }
+{
 }
 
 void Board::loadSettings()
@@ -34,6 +35,9 @@ void Board::loadSettings()
     m_pidSettings.d = Config::getPidD(m_pidSettings.d);
 
     ESP_LOGI(TAG, "ASIC Frequency: %dMHz", m_asicFrequency);
+    for (uint8_t i = 0; i < getAsicCount(); ++i) {
+        ESP_LOGI(TAG, "ASIC %d Frequency: %dMHz", i, getAsicFrequency(i));
+    }
     ESP_LOGI(TAG, "ASIC voltage: %dmV", m_asicVoltageMillis);
     ESP_LOGI(TAG, "ASIC job interval: %dms", m_asicJobIntervalMs);
     ESP_LOGI(TAG, "invert fan polarity: %s", m_fanInvertPolarity ? "true" : "false");

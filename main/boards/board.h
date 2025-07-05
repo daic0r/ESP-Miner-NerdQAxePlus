@@ -153,6 +153,14 @@ class Board {
         return m_asicFrequency;
     }
 
+    int getAsicFrequency(uint8_t asic_index)
+    {
+        if (m_asics && asic_index < m_asicCount) {
+            return m_asics->getAsicFrequency(asic_index);
+        }
+        return -1;
+    }
+
     int getDefaultAsicVoltageMillis()
     {
         return m_defaultAsicVoltageMillis;

@@ -3,6 +3,7 @@
 #include "esp_log.h"
 #include "nvs.h"
 #include "nvs_config.h"
+#include <string>
 
 #define NVS_CONFIG_NAMESPACE "main"
 
@@ -134,6 +135,12 @@ void nvs_config_set_u64(const char *key, const uint64_t value)
         ESP_LOGW(TAG, "Could not write nvs key: %s, value: %llu", key, value);
     }
     nvs_close(handle);
+}
+
+void setAsicFrequency(uint8_t asic_index, uint16_t frequency)
+{
+    const auto strKey = std::string{ NVS_CONFIG_ASIC_FREQ_SINGLE } + std::to_string(asic_index);
+    nvs_config_set_u16(strKey.c_str(), frequency);
 }
 
 }

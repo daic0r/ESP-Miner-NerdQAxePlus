@@ -15,6 +15,8 @@ class PowerManagementTask {
     float m_power;
     float m_current;
     PID *m_pid;
+    uint8_t m_asicCount;
+    uint16_t* m_arr_asicFrequencies;
 
     void requestChipTemps();
     void checkCoreVoltageChanged();
@@ -24,6 +26,7 @@ class PowerManagementTask {
 
   public:
     PowerManagementTask();
+    ~PowerManagementTask();
 
     // synchronized rebooting to now mess up i2c comms
     void restart();
@@ -66,4 +69,6 @@ class PowerManagementTask {
     void unlock() {
         pthread_mutex_unlock(&m_mutex);
     }
+
+    void setAsicCount(uint8_t);
 };

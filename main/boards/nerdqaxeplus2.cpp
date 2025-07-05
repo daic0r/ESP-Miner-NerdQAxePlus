@@ -33,7 +33,7 @@ NerdQaxePlus2::NerdQaxePlus2() : NerdQaxePlus() {
 #ifdef NERDQAXEPLUS2
     m_theme = new ThemeNerdqaxeplus2();
 #endif
-    m_asics = new BM1370();
+    m_asics = new BM1370(m_asicCount);
 }
 
 float NerdQaxePlus2::getTemperature(int index) {

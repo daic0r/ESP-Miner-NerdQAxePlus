@@ -62,7 +62,7 @@ NerdAxe::NerdAxe() : Board() {
     m_theme = new ThemeNerdaxe();
 #endif
 
-    m_asics = new BM1366();
+    m_asics = new BM1366(m_asicCount);
 }
 
 /**

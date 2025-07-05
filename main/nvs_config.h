@@ -20,6 +20,7 @@
 #define NVS_CONFIG_STRATUM_DIFFICULTY "stratumdiff"
 
 #define NVS_CONFIG_ASIC_FREQ "asicfrequency"
+#define NVS_CONFIG_ASIC_FREQ_SINGLE "asicfrequency_"
 #define NVS_CONFIG_ASIC_VOLTAGE "asicvoltage"
 #define NVS_CONFIG_ASIC_JOB_INTERVAL "asicjobinterval"
 #define NVS_CONFIG_FLIP_SCREEN "flipscreen"
@@ -111,6 +112,7 @@ namespace Config {
 
     // ---- uint16_t Setters ----
     inline void setAsicFrequency(uint16_t value) { nvs_config_set_u16(NVS_CONFIG_ASIC_FREQ, value); }
+    void setAsicFrequency(uint8_t asic_index, uint16_t value);
     inline void setAsicVoltage(uint16_t value) { nvs_config_set_u16(NVS_CONFIG_ASIC_VOLTAGE, value); }
     inline void setAsicJobInterval(uint16_t value) { nvs_config_set_u16(NVS_CONFIG_ASIC_JOB_INTERVAL, value); }
     inline void setStratumPortNumber(uint16_t value) { nvs_config_set_u16(NVS_CONFIG_STRATUM_PORT, value); }

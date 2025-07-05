@@ -62,7 +62,7 @@ NerdQaxePlus::NerdQaxePlus() : Board() {
     m_theme = new ThemeNerdqaxeplus();
 #endif
 
-    m_asics = new BM1368();
+    m_asics = new BM1368(m_asicCount);
     m_tps = new TPS53647();
 }
 
