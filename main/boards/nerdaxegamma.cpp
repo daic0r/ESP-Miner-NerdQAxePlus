@@ -28,6 +28,7 @@ NerdaxeGamma::NerdaxeGamma() : NerdAxe() {
 
     m_asicJobIntervalMs = 1500;
     m_defaultAsicFrequency = m_asicFrequency = 515;
+    m_asicFrequencies = std::vector<int>(m_asicCount, m_defaultAsicFrequency);
     m_defaultAsicVoltageMillis = m_asicVoltageMillis = 1150;
     m_initVoltageMillis = 1150;
     m_fanInvertPolarity = true;

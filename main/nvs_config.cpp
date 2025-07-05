@@ -139,8 +139,13 @@ void nvs_config_set_u64(const char *key, const uint64_t value)
 
 void setAsicFrequency(uint8_t asic_index, uint16_t frequency)
 {
-    const auto strKey = std::string{ NVS_CONFIG_ASIC_FREQ_SINGLE } + std::to_string(asic_index);
-    nvs_config_set_u16(strKey.c_str(), frequency);
+   const auto strKey = std::string{ NVS_CONFIG_ASIC_FREQ_SINGLE } + std::to_string(asic_index);
+   nvs_config_set_u16(strKey.c_str(), frequency);
+}
+
+uint16_t getAsicFrequency(uint8_t asic_index, uint16_t d) {
+   const auto strKey = std::string{ NVS_CONFIG_ASIC_FREQ_SINGLE } + std::to_string(asic_index);
+   return nvs_config_get_u16(strKey.c_str(), d);
 }
 
 }

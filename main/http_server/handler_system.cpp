@@ -272,6 +272,7 @@ esp_err_t PATCH_update_settings(httpd_req_t *req)
        }
        uint16_t frequency = doc[strKey.c_str()].as<uint16_t>();
        if (frequency > 0) {
+           ESP_LOGI(TAG, "Setting frequency for ASIC %d to %dMHz", i, frequency);
            Config::setAsicFrequency(i, frequency);
        }
     }

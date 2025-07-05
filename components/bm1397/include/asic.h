@@ -72,8 +72,6 @@ typedef struct __attribute__((__packed__))
     uint8_t crc;
 } asic_result_t;
 
-class Board;
-
 class Asic {
 protected:
     float m_current_frequency;

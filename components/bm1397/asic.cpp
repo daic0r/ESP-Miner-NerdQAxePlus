@@ -177,7 +177,7 @@ bool Asic::sendHashFrequency(uint8_t asic_index, float target_freq) {
     }
 
     if (asic_index == std::numeric_limits<uint8_t>::max()) {
-       send(CMD_WRITE_ALL, freqbuf->data(), sizeof(freqbuf), ASIC_SERIALTX_DEBUG);
+       send(CMD_WRITE_ALL, freqbuf->data(), sizeof(*freqbuf), ASIC_SERIALTX_DEBUG);
        //ESP_LOG_BUFFER_HEX(TAG, freqbuf, sizeof(freqbuf));
 
        ESP_LOGI(TAG, "Setting Frequency %d to %.2fMHz (%.2f)", asic_index, target_freq, best_newf);
@@ -186,7 +186,7 @@ bool Asic::sendHashFrequency(uint8_t asic_index, float target_freq) {
           m_arr_current_frequencies[i] = target_freq;
        }
     } else {
-       send(CMD_WRITE_SINGLE, freqbuf->data(), sizeof(freqbuf), ASIC_SERIALTX_DEBUG);
+       send(CMD_WRITE_SINGLE, freqbuf->data(), sizeof(*freqbuf), ASIC_SERIALTX_DEBUG);
        //ESP_LOG_BUFFER_HEX(TAG, freqbuf, sizeof(freqbuf));
 
        ESP_LOGI(TAG, "Setting Frequency of ASIC %d to %.2fMHz (%.2f)", asic_index, target_freq, best_newf);
@@ -295,7 +295,7 @@ bool Asic::setAsicFrequency(float target_freq) {
 
 // pass std::numeric_limits<uint8_t>::max() to set all asics
 bool Asic::setAsicFrequency(uint8_t asic_index, float target_freq) {
-    if (asic_index >= m_asic_count) {
+    if (asic_index < std::numeric_limits<uint8_t>::max() && asic_index >= m_asic_count) {
         ESP_LOGE(TAG, "Invalid ASIC index %d, max is %d", asic_index, m_asic_count - 1);
         return false;
     }

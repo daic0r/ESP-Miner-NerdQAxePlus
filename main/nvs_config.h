@@ -153,6 +153,7 @@ namespace Config {
 
     // with board specific default values
     inline uint16_t getAsicFrequency(uint16_t d) { return nvs_config_get_u16(NVS_CONFIG_ASIC_FREQ, d); }
+    uint16_t getAsicFrequency(uint8_t asic_index, uint16_t d);
     inline uint16_t getAsicVoltage(uint16_t d) { return nvs_config_get_u16(NVS_CONFIG_ASIC_VOLTAGE, d); }
     inline uint16_t getAsicJobInterval(uint16_t d) { return nvs_config_get_u16(NVS_CONFIG_ASIC_JOB_INTERVAL, d); }
     inline bool isFlipScreenEnabled(bool d) { return nvs_config_get_u16(NVS_CONFIG_FLIP_SCREEN, d ? 1 : 0) != 0; }
