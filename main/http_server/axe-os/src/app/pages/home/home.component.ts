@@ -196,6 +196,11 @@ export class HomeComponent implements AfterViewChecked, OnInit, OnDestroy {
         info.temp = parseFloat(info.temp.toFixed(1));
         info.vrTemp = parseFloat(info.vrTemp.toFixed(1));
 
+        info.frequency_0 = info.frequency;
+        info.frequency_1 = info.frequency;
+        info.frequency_2 = info.frequency;
+        info.frequency_3 = info.frequency;
+
         return info;
       }),
       shareReplay({ refCount: true, bufferSize: 1 })
