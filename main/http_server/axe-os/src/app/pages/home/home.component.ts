@@ -161,7 +161,7 @@ export class HomeComponent implements AfterViewChecked, OnInit, OnDestroy {
         // Cap the startTimestamp to be at most one hour ago
         let startTimestamp = storedLastTimestamp ? Math.max(storedLastTimestamp + 1, oneHourAgo) : oneHourAgo;
 
-        return this.systemService.getInfo(startTimestamp);
+        return this.systemService.getInfo(startTimestamp, 'http://192.168.178.62');
       }),
       tap(info => {
         if (!info) {
@@ -195,11 +195,6 @@ export class HomeComponent implements AfterViewChecked, OnInit, OnDestroy {
         info.coreVoltage = parseFloat((info.coreVoltage / 1000).toFixed(2));
         info.temp = parseFloat(info.temp.toFixed(1));
         info.vrTemp = parseFloat(info.vrTemp.toFixed(1));
-
-        info.frequency_0 = info.frequency;
-        info.frequency_1 = info.frequency;
-        info.frequency_2 = info.frequency;
-        info.frequency_3 = info.frequency;
 
         return info;
       }),

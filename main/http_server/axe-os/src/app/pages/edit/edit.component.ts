@@ -19,7 +19,7 @@ export class EditComponent implements OnInit {
 
   public dialogRef!: NbDialogRef<any>; // Store reference
 
-  public frequencyOptions: { name: string; value: number }[] = []; // Declare for frequency options
+  public frequencyOptions: { name: string; value: number }[][] = []; // Declare for frequency options
   public voltageOptions: { name: string; value: number }[] = [];  // Declare for voltage options
 
   public firmwareUpdateProgress: number | null = null;
@@ -67,7 +67,7 @@ export class EditComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.systemService.getInfo(0, this.uri)
+    this.systemService.getInfo(0, "http://192.168.178.62")
       .pipe(this.loadingService.lockUIUntilComplete())
       .subscribe(info => {
         this.originalSettings = structuredClone(info);
@@ -78,7 +78,9 @@ export class EditComponent implements OnInit {
         this.defaultCoreVoltage = info.defaultCoreVoltage ?? 0;
 
         // Assemble dropdown options
-        this.frequencyOptions = this.assembleDropdownOptions(this.getPredefinedFrequencies(this.defaultFrequency), info.frequency);
+        for (let i = 0; i < 4; ++i) {
+          this.frequencyOptions[i] = this.assembleDropdownOptions(this.getPredefinedFrequencies(this.defaultFrequency), info[`frequency_${i}`]);
+        }
         this.voltageOptions = this.assembleDropdownOptions(this.getPredefinedVoltages(this.defaultCoreVoltage), info.coreVoltage);
 
         // fix setting where we allowed to disable temp shutdown
@@ -125,6 +127,10 @@ export class EditComponent implements OnInit {
           wifiPass: ['*****'],
           coreVoltage: [info.coreVoltage, [Validators.min(1005), Validators.max(1400), Validators.required]],
           frequency: [info.frequency, [Validators.required]],
+          frequency_0: [info.frequency_0, [Validators.required]],
+          frequency_1: [info.frequency_1, [Validators.required]],
+          frequency_2: [info.frequency_2, [Validators.required]],
+          frequency_3: [info.frequency_3, [Validators.required]],
           jobInterval: [info.jobInterval, [Validators.required]],
           stratumDifficulty: [info.stratumDifficulty, [Validators.required, Validators.min(1)]],
           autofanspeed: [info.autofanspeed ?? 0, [Validators.required]],
@@ -210,7 +216,7 @@ export class EditComponent implements OnInit {
       delete form.stratumPassword;
     }
 
-    this.systemService.updateSystem(this.uri, form)
+    this.systemService.updateSystem("http://192.168.178.62", form)
       .pipe(this.loadingService.lockUIUntilComplete())
       .subscribe({
         next: () => {
@@ -276,7 +282,9 @@ export class EditComponent implements OnInit {
   public setDevToolsOpen(state: boolean) {
     this.devToolsOpen = state;
     console.log('Advanced Mode:', state); // Debugging output
-    this.frequencyOptions = this.assembleDropdownOptions(this.getPredefinedFrequencies(this.defaultFrequency), this.form.controls['frequency'].value);
+    for (let i = 0; i < 4; ++i) {
+      this.frequencyOptions[i] = this.assembleDropdownOptions(this.getPredefinedFrequencies(this.defaultFrequency), this.form.controls[`frequency_${i}`].value);
+    }
     this.voltageOptions = this.assembleDropdownOptions(this.getPredefinedVoltages(this.defaultCoreVoltage), this.form.controls['coreVoltage'].value);
     this.updatePIDFieldStates();
   }
@@ -288,7 +296,8 @@ export class EditComponent implements OnInit {
 
   public isFrequencyTooHigh(): boolean {
     const maxFrequency = Math.max(...this.getPredefinedFrequencies(this.defaultFrequency).map(f => f.value));
-    return this.form?.controls['frequency'].value > maxFrequency;
+    const control_names = ['frequency_0', 'frequency_1', 'frequency_2', 'frequency_3'];
+    return control_names.some(name => this.form?.controls[name].value > maxFrequency)
   }
 
   public checkVoltageLimit(): void {
@@ -296,7 +305,8 @@ export class EditComponent implements OnInit {
   }
 
   public checkFrequencyLimit(): void {
-    this.form.controls['frequency'].updateValueAndValidity({ emitEvent: false });
+    for (let i = 0; i < 3; ++i)
+      this.form.controls[`frequency_${i}`].updateValueAndValidity({ emitEvent: false });
   }
 
 

@@ -74,7 +74,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
 
     // Fetch device info
-    this.infoService.getInfo(0).subscribe(info => {
+    this.infoService.getInfo(0, 'http://192.168.178.62').subscribe(info => {
       if (info && info.deviceModel) {
         this.deviceModel = info.deviceModel.replace('γ', 'Gamma');
       }
