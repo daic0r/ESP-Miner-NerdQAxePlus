@@ -19,7 +19,8 @@ export class EditComponent implements OnInit {
 
   public dialogRef!: NbDialogRef<any>; // Store reference
 
-  public frequencyOptions: { name: string; value: number }[][] = []; // Declare for frequency options
+  public frequencyOptions_all: { name: string; value: number }[] = []; // Declare for frequency options
+  public frequencyOptions: { name: string; value: number }[][] = []; // Declare for frequency options (per-ASIC)
   public voltageOptions: { name: string; value: number }[] = [];  // Declare for voltage options
 
   public firmwareUpdateProgress: number | null = null;
@@ -33,6 +34,8 @@ export class EditComponent implements OnInit {
 
   public defaultFrequency: number = 0;
   public defaultCoreVoltage: number = 0;
+
+  public asicCount: number = 0;
 
   private originalSettings!: any;
 
@@ -78,8 +81,9 @@ export class EditComponent implements OnInit {
         this.defaultCoreVoltage = info.defaultCoreVoltage ?? 0;
 
         // Assemble dropdown options
-        for (let i = 0; i < 4; ++i) {
-          this.frequencyOptions[i] = this.assembleDropdownOptions(this.getPredefinedFrequencies(this.defaultFrequency), info[`frequency_${i}`]);
+        this.frequencyOptions_all = this.assembleDropdownOptions(this.getPredefinedFrequencies(this.defaultFrequency), info.frequency);
+        for (let i = 0; i < info.asicCount; ++i) {
+          this.frequencyOptions[i] = this.assembleDropdownOptions(this.getPredefinedFrequencies(this.defaultFrequency), info.frequencies[i]);
         }
         this.voltageOptions = this.assembleDropdownOptions(this.getPredefinedVoltages(this.defaultCoreVoltage), info.coreVoltage);
 
@@ -92,7 +96,7 @@ export class EditComponent implements OnInit {
         info.overheat_temp = Math.max(info.overheat_temp, 40);
         info.overheat_temp = Math.min(info.overheat_temp, 90);
 
-        this.form = this.fb.group({
+        const form_validations = {
           flipscreen: [info.flipscreen == 1],
           invertscreen: [info.invertscreen == 1],
           autoscreenoff: [info.autoscreenoff == 1],
@@ -127,10 +131,6 @@ export class EditComponent implements OnInit {
           wifiPass: ['*****'],
           coreVoltage: [info.coreVoltage, [Validators.min(1005), Validators.max(1400), Validators.required]],
           frequency: [info.frequency, [Validators.required]],
-          frequency_0: [info.frequency_0, [Validators.required]],
-          frequency_1: [info.frequency_1, [Validators.required]],
-          frequency_2: [info.frequency_2, [Validators.required]],
-          frequency_3: [info.frequency_3, [Validators.required]],
           jobInterval: [info.jobInterval, [Validators.required]],
           stratumDifficulty: [info.stratumDifficulty, [Validators.required, Validators.min(1)]],
           autofanspeed: [info.autofanspeed ?? 0, [Validators.required]],
@@ -161,7 +161,13 @@ export class EditComponent implements OnInit {
             Validators.min(40),
             Validators.max(90),
             Validators.required]]
-        });
+        };
+        for (let i = 0; i < info.asicCount; ++i) {
+          form_validations[`frequency_${i}`] = [info.frequencies[i], [Validators.required]];
+        }
+        this.form = this.fb.group(form_validations);
+
+        this.asicCount = info.asicCount;
 
         this.form.controls['autofanspeed'].valueChanges
           .pipe(startWith(this.form.controls['autofanspeed'].value))
@@ -282,7 +288,7 @@ export class EditComponent implements OnInit {
   public setDevToolsOpen(state: boolean) {
     this.devToolsOpen = state;
     console.log('Advanced Mode:', state); // Debugging output
-    for (let i = 0; i < 4; ++i) {
+    for (let i = 0; i < this.asicCount; ++i) {
       this.frequencyOptions[i] = this.assembleDropdownOptions(this.getPredefinedFrequencies(this.defaultFrequency), this.form.controls[`frequency_${i}`].value);
     }
     this.voltageOptions = this.assembleDropdownOptions(this.getPredefinedVoltages(this.defaultCoreVoltage), this.form.controls['coreVoltage'].value);
@@ -294,10 +300,12 @@ export class EditComponent implements OnInit {
     return this.form?.controls['coreVoltage'].value > maxVoltage;
   }
 
-  public isFrequencyTooHigh(): boolean {
+  public isFrequencyTooHigh(asic: number | null = null): boolean {
     const maxFrequency = Math.max(...this.getPredefinedFrequencies(this.defaultFrequency).map(f => f.value));
-    const control_names = ['frequency_0', 'frequency_1', 'frequency_2', 'frequency_3'];
-    return control_names.some(name => this.form?.controls[name].value > maxFrequency)
+    if (asic !== null && this.form?.controls[`frequency_${asic}`]) {
+      return this.form.controls[`frequency_${asic}`].value > maxFrequency;
+    }
+    return this.form?.controls['frequency'].value > maxFrequency;
   }
 
   public checkVoltageLimit(): void {
@@ -305,11 +313,22 @@ export class EditComponent implements OnInit {
   }
 
   public checkFrequencyLimit(): void {
-    for (let i = 0; i < 3; ++i)
+    this.form.controls['frequency'].updateValueAndValidity({ emitEvent: false });
+    for (let i = 0; i < this.asicCount; ++i)
       this.form.controls[`frequency_${i}`].updateValueAndValidity({ emitEvent: false });
   }
 
+  public hasPerAsicFrequencyChange(): boolean {
+    const current = this.form.getRawValue();
 
+    // Check if any per-ASIC frequency has changed
+    for (let i = 0; i < this.asicCount; ++i) {
+      const asicFreq = current[`frequency_${i}`];
+      if (current.frequency !== asicFreq)
+        return true;
+    }
+    return false;
+  }
 
   /**
    * Dynamically assemble dropdown options, including custom values.
@@ -395,7 +414,8 @@ export class EditComponent implements OnInit {
 
   // Function to check if settings are unsafe
   public hasUnsafeSettings(): boolean {
-    return this.isVoltageTooHigh() || this.isFrequencyTooHigh();
+    return this.isVoltageTooHigh() || this.isFrequencyTooHigh() ||
+      [].constructor(this.asicCount).fill(0).some((_, idx: number) => this.isFrequencyTooHigh(idx));
   }
 
   // Open warning modal unless user disabled it

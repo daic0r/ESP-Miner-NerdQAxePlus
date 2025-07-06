@@ -121,37 +121,10 @@
             <nb-card-body>
                 <ng-container *ngIf="!devToolsOpen">
                     <div class="form-row">
-                        <label for="frequency_0" class="form-label">Frequency #0:</label>
+                        <label for="frequency" class="form-label">Frequency:</label>
                         <div class="form-control-wrapper">
-                            <nb-select formControlName="frequency_0" [ngClass]="{'unsafe-setting': isFrequencyTooHigh()}">
-                                <nb-option *ngFor="let option of frequencyOptions[0]" [value]="option.value">{{ option.name
-                                    }}</nb-option>
-                            </nb-select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <label for="frequency_1" class="form-label">Frequency #1:</label>
-                        <div class="form-control-wrapper">
-                            <nb-select formControlName="frequency_1" [ngClass]="{'unsafe-setting': isFrequencyTooHigh()}">
-                                <nb-option *ngFor="let option of frequencyOptions[1]" [value]="option.value">{{ option.name
-                                    }}</nb-option>
-                            </nb-select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <label for="frequency_2" class="form-label">Frequency #2:</label>
-                        <div class="form-control-wrapper">
-                            <nb-select formControlName="frequency_2" [ngClass]="{'unsafe-setting': isFrequencyTooHigh()}">
-                                <nb-option *ngFor="let option of frequencyOptions[2]" [value]="option.value">{{ option.name
-                                    }}</nb-option>
-                            </nb-select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <label for="frequency_3" class="form-label">Frequency #3:</label>
-                        <div class="form-control-wrapper">
-                            <nb-select formControlName="frequency_3" [ngClass]="{'unsafe-setting': isFrequencyTooHigh()}">
-                                <nb-option *ngFor="let option of frequencyOptions[3]" [value]="option.value">{{ option.name
+                            <nb-select formControlName="frequency" [ngClass]="{'unsafe-setting': isFrequencyTooHigh()}">
+                                <nb-option *ngFor="let option of frequencyOptions_all" [value]="option.value">{{ option.name
                                     }}</nb-option>
                             </nb-select>
                         </div>
@@ -168,32 +141,11 @@
                 </ng-container>
 
                 <ng-container *ngIf="devToolsOpen">
-                    <div class="form-row">
-                        <label for="frequency_0" class="form-label">Frequency #0:</label>
+                    <div class="form-row" *ngFor="let _ of [].constructor(asicCount); let asicIndex = index;">
+                      <label [for]="'frequency_' + asicIndex" class="form-label">Frequency ASIC #{{ asicIndex }}:</label>
                         <div class="form-control-wrapper">
-                            <input (input)="checkFrequencyLimit()" [ngClass]="{'unsafe-setting': isFrequencyTooHigh()}"
-                                nbInput id="frequency_0" formControlName="frequency_0" type="number" />
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <label for="frequency_1" class="form-label">Frequency #1:</label>
-                        <div class="form-control-wrapper">
-                            <input (input)="checkFrequencyLimit()" [ngClass]="{'unsafe-setting': isFrequencyTooHigh()}"
-                                nbInput id="frequency_1" formControlName="frequency_1" type="number" />
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <label for="frequency_2" class="form-label">Frequency #2:</label>
-                        <div class="form-control-wrapper">
-                            <input (input)="checkFrequencyLimit()" [ngClass]="{'unsafe-setting': isFrequencyTooHigh()}"
-                                nbInput id="frequency_2" formControlName="frequency_2" type="number" />
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <label for="frequency_3" class="form-label">Frequency #3:</label>
-                        <div class="form-control-wrapper">
-                            <input (input)="checkFrequencyLimit()" [ngClass]="{'unsafe-setting': isFrequencyTooHigh()}"
-                                nbInput id="frequency_3" formControlName="frequency_3" type="number" />
+                          <input (input)="checkFrequencyLimit()" [ngClass]="{'unsafe-setting': isFrequencyTooHigh(asicIndex)}"
+                            nbInput [id]="'frequency_' + asicIndex" [formControlName]="'frequency_' + asicIndex" type="number" />
                         </div>
                     </div>
                     <div class="form-row">

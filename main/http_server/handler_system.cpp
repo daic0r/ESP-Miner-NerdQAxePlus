@@ -101,9 +101,9 @@ esp_err_t GET_system_info(httpd_req_t *req)
     doc["lastpingrtt"]        = get_last_ping_rtt();
     doc["poolDifficulty"]     = SYSTEM_MODULE.getPoolDifficulty();
 
+    doc["frequencies"] = JsonArray();
     for (uint8_t i = 0; i < board->getAsicCount(); ++i) {
-      const auto strKey = std::string{ "frequency_" } + std::to_string(i);
-      doc[strKey.c_str()] = board->getAsicFrequency(i);
+        doc["frequencies"].add(board->getAsicFrequency(i));
     }
 
     // If history was requested, add the history data as a nested object
