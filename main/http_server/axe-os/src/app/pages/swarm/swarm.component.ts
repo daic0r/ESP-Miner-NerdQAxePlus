@@ -64,7 +64,7 @@ export class SwarmComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.systemService.getInfo(0, 'http://192.168.178.62')
+    this.systemService.getInfo(0)
       .pipe(this.loadingService.lockUIUntilComplete())
       .subscribe({
         next: (info) => {

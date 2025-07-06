@@ -32,9 +32,9 @@ export class SystemComponent implements OnDestroy, AfterViewChecked {
 
 
     this.info$ = interval(5000).pipe(
-      startWith(() => this.systemService.getInfo(0, 'http://192.168.178.62')),
+      startWith(() => this.systemService.getInfo(0)),
       switchMap(() => {
-        return this.systemService.getInfo(0, 'http://192.168.178.62')
+        return this.systemService.getInfo(0)
       }),
       map(info => {
         info.power = parseFloat(info.power.toFixed(1))

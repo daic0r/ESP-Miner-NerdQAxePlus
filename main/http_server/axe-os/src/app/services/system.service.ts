@@ -82,7 +82,8 @@ const defaultInfo: ISystemInfo = {
     hashrate_1h: [],
     hashrate_1d: [],
     timestamps: [],
-    timestampBase: 0
+    timestampBase: 0,
+    nonce_distribution: []
   }
 }
 
@@ -102,8 +103,7 @@ export class SystemService {
 
   public getInfo(ts: number, uri: string = ''): Observable<ISystemInfo> {
     if (environment.production) {
-      const uri_base = `${uri}/api/system/info`;
-      const ret = this.httpClient.get(`${uri_base}?ts=${ts}&cur=${Math.floor(Date.now())}`) as Observable<ISystemInfo>;
+      const ret = this.httpClient.get(`${uri}/api/system/info?ts=${ts}&cur=${Math.floor(Date.now())}`) as Observable<ISystemInfo>;
       return ret;
     } else {
       return of(defaultInfo).pipe(delay(1000));

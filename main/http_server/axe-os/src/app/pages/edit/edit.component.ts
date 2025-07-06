@@ -70,7 +70,7 @@ export class EditComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.systemService.getInfo(0, "http://192.168.178.62")
+    this.systemService.getInfo(0, this.uri)
       .pipe(this.loadingService.lockUIUntilComplete())
       .subscribe(info => {
         this.originalSettings = structuredClone(info);
@@ -180,8 +180,10 @@ export class EditComponent implements OnInit {
         }
         for (let i = 0; i < this.asicCount; ++i) {
           this.form.controls[`frequency_${i}`].valueChanges
-            .subscribe(() => this.updateFrequenciesState());
+            .subscribe(() => this.updateFrequencyControlState());
         }
+        this.form.controls['frequency'].valueChanges
+          .subscribe(() => this.updatePerAsicFreqs());
 
         this.updatePIDFieldStates();
       });
@@ -219,14 +221,20 @@ export class EditComponent implements OnInit {
     }
   }
 
-  private updateFrequenciesState(): void {
+  private updateFrequencyControlState(): void {
     for (let i = 0; i < this.asicCount; ++i) {
       if (this.form.controls[`frequency_${i}`].value !== this.form.controls['frequency'].value) {
-        this.form.controls.frequency.disable();
+        this.form.controls.frequency.disable({ emitEvent: false });
         return;
       }
     }
-    this.form.controls.frequency.enable();
+    this.form.controls.frequency.enable({ emitEvent: false });
+  }
+
+  private updatePerAsicFreqs(): void {
+    for (let i = 0; i < this.asicCount; ++i) {
+      this.form.controls[`frequency_${i}`].setValue(this.form.controls['frequency'].value, { emitEvent: false });
+    }
   }
 
   public updateSystem() {
@@ -242,7 +250,7 @@ export class EditComponent implements OnInit {
       delete form.stratumPassword;
     }
 
-    this.systemService.updateSystem("http://192.168.178.62", form)
+    this.systemService.updateSystem(this.uri, form)
       .pipe(this.loadingService.lockUIUntilComplete())
       .subscribe({
         next: () => {

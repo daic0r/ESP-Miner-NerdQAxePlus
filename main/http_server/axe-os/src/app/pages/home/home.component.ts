@@ -36,9 +36,16 @@ export class HomeComponent implements AfterViewChecked, OnInit, OnDestroy {
   public dataData1h: number[] = [];
   public dataData1d: number[] = [];
   public chartData?: any;
+  public totalNonces: number = 0;
+  public asicContribution: string[] = [];
+  public identicalAsicFreqs: boolean = false; // Flag to indicate if all ASICs have identical frequencies
 
   private localStorageKey = 'chartData';
   private timestampKey = 'lastTimestamp'; // Key to store lastTimestamp
+
+  get formattedAsicContributions(): string {
+    return this.asicContribution.map(cont => `${cont}%`).join(' / ');
+  }
 
   ngAfterViewChecked(): void {
     // Ensure chart is initialized only once when the canvas becomes available
@@ -195,6 +202,12 @@ export class HomeComponent implements AfterViewChecked, OnInit, OnDestroy {
         info.coreVoltage = parseFloat((info.coreVoltage / 1000).toFixed(2));
         info.temp = parseFloat(info.temp.toFixed(1));
         info.vrTemp = parseFloat(info.vrTemp.toFixed(1));
+        const totalNonces = info.history.nonce_distribution.reduce((sum: number, value: number) => sum + value, 0);
+        this.asicContribution = info.history.nonce_distribution.map((value: number) => {
+          return (value / totalNonces * 100).toFixed(0);
+        });
+
+        this.identicalAsicFreqs = info.frequencies.every((freq: number) => freq === info.frequency);
 
         return info;
       }),
