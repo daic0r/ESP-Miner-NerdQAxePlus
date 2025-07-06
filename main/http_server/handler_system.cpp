@@ -259,21 +259,33 @@ esp_err_t PATCH_update_settings(httpd_req_t *req)
             Config::setAsicVoltage(coreVoltage);
         }
     }
+    bool bHasGeneralFreqChanged{};
+    uint16_t frequency{};
     if (doc["frequency"].is<uint16_t>()) {
-        uint16_t frequency = doc["frequency"].as<uint16_t>();
+        frequency = doc["frequency"].as<uint16_t>();
         if (frequency > 0) {
-            Config::setAsicFrequency(frequency);
+           if (frequency != Config::getAsicFrequency(board->getAsicFrequency())) {
+               ESP_LOGI(TAG, "Setting general ASIC frequency to %dMHz", frequency);
+               bHasGeneralFreqChanged = true;
+           }
+           Config::setAsicFrequency(frequency);
         }
     }
     for (uint8_t i = 0; i < board->getAsicCount(); ++i) {
-       const auto strKey = "frequency_" + std::to_string(i);
-       if (!doc[strKey.c_str()].is<uint16_t>()) {
-           continue;
-       }
-       uint16_t frequency = doc[strKey.c_str()].as<uint16_t>();
-       if (frequency > 0) {
-           ESP_LOGI(TAG, "Setting frequency for ASIC %d to %dMHz", i, frequency);
+       if (bHasGeneralFreqChanged) {
+           // If the general frequency was changed, we need to update all ASIC frequencies
+           ESP_LOGI(TAG, "Setting frequency for ASIC %d to %dMHz", i, Config::getAsicFrequency(i, board->getAsicFrequency(i)));
            Config::setAsicFrequency(i, frequency);
+       } else {
+          const auto strKey = "frequency_" + std::to_string(i);
+          if (!doc[strKey.c_str()].is<uint16_t>()) {
+             continue;
+          }
+          uint16_t frequency = doc[strKey.c_str()].as<uint16_t>();
+          if (frequency > 0) {
+             ESP_LOGI(TAG, "Setting frequency for ASIC %d to %dMHz", i, frequency);
+             Config::setAsicFrequency(i, frequency);
+          }
        }
     }
     if (doc["jobInterval"].is<uint16_t>()) {

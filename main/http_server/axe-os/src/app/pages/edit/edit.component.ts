@@ -173,6 +173,16 @@ export class EditComponent implements OnInit {
           .pipe(startWith(this.form.controls['autofanspeed'].value))
           .subscribe(() => this.updatePIDFieldStates());
 
+        if (info.frequencies.some(f => f !== info.frequency)) {
+          this.form.controls.frequency.disable();
+        } else {
+          this.form.controls.frequency.enable();
+        }
+        for (let i = 0; i < this.asicCount; ++i) {
+          this.form.controls[`frequency_${i}`].valueChanges
+            .subscribe(() => this.updateFrequenciesState());
+        }
+
         this.updatePIDFieldStates();
       });
   }
@@ -207,6 +217,16 @@ export class EditComponent implements OnInit {
         disable('pidD');
       }
     }
+  }
+
+  private updateFrequenciesState(): void {
+    for (let i = 0; i < this.asicCount; ++i) {
+      if (this.form.controls[`frequency_${i}`].value !== this.form.controls['frequency'].value) {
+        this.form.controls.frequency.disable();
+        return;
+      }
+    }
+    this.form.controls.frequency.enable();
   }
 
   public updateSystem() {
@@ -316,18 +336,6 @@ export class EditComponent implements OnInit {
     this.form.controls['frequency'].updateValueAndValidity({ emitEvent: false });
     for (let i = 0; i < this.asicCount; ++i)
       this.form.controls[`frequency_${i}`].updateValueAndValidity({ emitEvent: false });
-  }
-
-  public hasPerAsicFrequencyChange(): boolean {
-    const current = this.form.getRawValue();
-
-    // Check if any per-ASIC frequency has changed
-    for (let i = 0; i < this.asicCount; ++i) {
-      const asicFreq = current[`frequency_${i}`];
-      if (current.frequency !== asicFreq)
-        return true;
-    }
-    return false;
   }
 
   /**

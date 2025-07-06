@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mining.h"
+#include <vector>
 
 #define CRC5_MASK 0x1F
 
