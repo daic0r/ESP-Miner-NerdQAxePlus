@@ -76,7 +76,7 @@ class Asic {
 protected:
     float m_current_frequency;
     uint8_t m_asic_count{};
-    float* m_arr_current_frequencies{};
+    std::vector<float> m_arr_current_frequencies{};
 
     void send(uint8_t header, uint8_t *data, uint8_t data_len, bool debug);
     void send2(uint8_t header, uint8_t b0, uint8_t b1);
@@ -98,7 +98,6 @@ protected:
 
 public:
     Asic(uint8_t asicCount);
-    virtual ~Asic();
     virtual const char* getName() = 0;
     uint8_t sendWork(uint32_t job_id, bm_job *next_bm_job);
     bool processWork(task_result *result);

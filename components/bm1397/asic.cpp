@@ -34,16 +34,12 @@ const static char* TAG = "asic";
 
 Asic::Asic(uint8_t asicCount) : 
    m_current_frequency{ 56.25 },
-   m_asic_count{ asicCount },
-   m_arr_current_frequencies{ new float[m_asic_count] } 
+   m_asic_count{ asicCount }
 {
+   m_arr_current_frequencies.resize(m_asic_count);
    for (uint8_t i = 0; i < m_asic_count; ++i) {
        m_arr_current_frequencies[i] = m_current_frequency;
    }
-}
-
-Asic::~Asic() {
-    delete[] m_arr_current_frequencies;
 }
 
 uint16_t Asic::reverseUint16(uint16_t num)
