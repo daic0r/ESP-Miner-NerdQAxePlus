@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include "boards/board.h"
 #include "pid/PID_v1_bc.h"
+#include <vector>
 
 class PowerManagementTask {
   protected:
@@ -16,7 +17,7 @@ class PowerManagementTask {
     float m_current;
     PID *m_pid;
     uint8_t m_asicCount;
-    uint16_t* m_arr_asicFrequencies;
+    std::vector<uint16_t> m_vAsicFrequencies;
 
     void requestChipTemps();
     void checkCoreVoltageChanged();
@@ -26,7 +27,6 @@ class PowerManagementTask {
 
   public:
     PowerManagementTask();
-    ~PowerManagementTask();
 
     // synchronized rebooting to now mess up i2c comms
     void restart();

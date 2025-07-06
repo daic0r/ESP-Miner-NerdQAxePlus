@@ -168,7 +168,7 @@ export class HomeComponent implements AfterViewChecked, OnInit, OnDestroy {
         // Cap the startTimestamp to be at most one hour ago
         let startTimestamp = storedLastTimestamp ? Math.max(storedLastTimestamp + 1, oneHourAgo) : oneHourAgo;
 
-        return this.systemService.getInfo(startTimestamp, 'http://192.168.178.62');
+        return this.systemService.getInfo(startTimestamp);
       }),
       tap(info => {
         if (!info) {

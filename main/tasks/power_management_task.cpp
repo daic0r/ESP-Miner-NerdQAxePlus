@@ -22,19 +22,9 @@ static const char *TAG = "power_management";
 
 PowerManagementTask::PowerManagementTask() 
       : m_pid{nullptr},
-      m_asicCount{0},
-      m_arr_asicFrequencies{nullptr}
+      m_asicCount{0}
 {
     m_mutex = PTHREAD_MUTEX_INITIALIZER;
-}
-
-PowerManagementTask::~PowerManagementTask() {
-    if (m_pid) {
-        delete m_pid;
-    }
-    if (m_arr_asicFrequencies) {
-        delete[] m_arr_asicFrequencies;
-    }
 }
 
 void PowerManagementTask::taskWrapper(void *pvParameters) {
@@ -102,19 +92,19 @@ void PowerManagementTask::checkAsicFrequencyChanged() {
         }
         last_asic_frequency = asic_frequency;
         for (uint8_t i = 0; i < m_asicCount; ++i) {
-            m_arr_asicFrequencies[i] = asic_frequency;
+            m_vAsicFrequencies[i] = asic_frequency;
         }
         return;
     }
 
     for (uint8_t i = 0; i < m_asicCount; ++i) {
         uint16_t freq = board->getAsicFrequency(i);
-        if (freq != m_arr_asicFrequencies[i]) {
+        if (freq != m_vAsicFrequencies[i]) {
             ESP_LOGI(TAG, "setting new asic #%d frequency to %uMHz", i, freq);
             if (asics && !asics->setAsicFrequency(i, (float) freq)) {
                 ESP_LOGE(TAG, "pll setting not found for %uMHz", freq);
             }
-            m_arr_asicFrequencies[i] = freq;
+            m_vAsicFrequencies[i] = freq;
         }
    }
 }
@@ -311,8 +301,8 @@ void PowerManagementTask::task()
 
 void PowerManagementTask::setAsicCount(uint8_t asicCount) {
     m_asicCount = asicCount;
-    m_arr_asicFrequencies = new uint16_t[m_asicCount];
+    m_vAsicFrequencies.resize(m_asicCount);
     for (uint8_t i = 0; i < m_asicCount; i++) {
-        m_arr_asicFrequencies[i] = 0;
+        m_vAsicFrequencies[i] = 0;
     }
 }
