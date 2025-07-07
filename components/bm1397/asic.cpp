@@ -36,9 +36,9 @@ Asic::Asic(uint8_t asicCount) :
    m_current_frequency{ 56.25 },
    m_asic_count{ asicCount }
 {
-   m_arr_current_frequencies.resize(m_asic_count);
+   m_vCurrentFrequencies.resize(m_asic_count);
    for (uint8_t i = 0; i < m_asic_count; ++i) {
-       m_arr_current_frequencies[i] = m_current_frequency;
+       m_vCurrentFrequencies[i] = m_current_frequency;
    }
 }
 
@@ -179,14 +179,14 @@ bool Asic::sendHashFrequency(uint8_t asic_index, float target_freq) {
        ESP_LOGI(TAG, "Setting Frequency %d to %.2fMHz (%.2f)", asic_index, target_freq, best_newf);
        m_current_frequency = target_freq;
        for (uint8_t i = 0; i < m_asic_count; ++i) {
-          m_arr_current_frequencies[i] = target_freq;
+          m_vCurrentFrequencies[i] = target_freq;
        }
     } else {
        send(CMD_WRITE_SINGLE, freqbuf->data(), sizeof(*freqbuf), ASIC_SERIALTX_DEBUG);
        //ESP_LOG_BUFFER_HEX(TAG, freqbuf, sizeof(freqbuf));
 
        ESP_LOGI(TAG, "Setting Frequency of ASIC %d to %.2fMHz (%.2f)", asic_index, target_freq, best_newf);
-       m_arr_current_frequencies[asic_index] = target_freq;
+       m_vCurrentFrequencies[asic_index] = target_freq;
     }
     return true;
 }
@@ -383,5 +383,5 @@ int Asic::getAsicFrequency(uint8_t asic_index) const
         ESP_LOGI(TAG, "Returning current frequency for all ASICs: %.2f MHz", m_current_frequency);
         return m_current_frequency;
     }
-    return m_arr_current_frequencies[asic_index];
+    return m_vCurrentFrequencies[asic_index];
 }

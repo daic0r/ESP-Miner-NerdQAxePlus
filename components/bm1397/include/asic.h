@@ -77,7 +77,7 @@ class Asic {
 protected:
     float m_current_frequency;
     uint8_t m_asic_count{};
-    std::vector<float> m_arr_current_frequencies{};
+    std::vector<float> m_vAsicFrequencies{};
 
     void send(uint8_t header, uint8_t *data, uint8_t data_len, bool debug);
     void send2(uint8_t header, uint8_t b0, uint8_t b1);
