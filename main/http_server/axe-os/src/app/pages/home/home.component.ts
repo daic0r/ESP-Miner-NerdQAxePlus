@@ -204,8 +204,8 @@ export class HomeComponent implements AfterViewChecked, OnInit, OnDestroy {
         info.vrTemp = parseFloat(info.vrTemp.toFixed(1));
         const totalNonces = info.history.nonce_distribution.reduce((sum: number, value: number) => sum + value, 0);
         this.asicContribution = info.history.nonce_distribution.map((value: number) => {
-          return (value / totalNonces * 100).toFixed(0);
-        });
+          return Math.round((value / totalNonces) * 100).toString();
+        })
 
         this.identicalAsicFreqs = info.frequencies.every((freq: number) => freq === info.frequency);
 

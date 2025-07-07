@@ -276,7 +276,7 @@ esp_err_t PATCH_update_settings(httpd_req_t *req)
     for (uint8_t i = 0; i < board->getAsicCount(); ++i) {
        if (bHasGeneralFreqChanged) {
            // If the general frequency was changed, we need to update all ASIC frequencies
-           ESP_LOGI(TAG, "Setting frequency for ASIC %d to %dMHz", i, Config::getAsicFrequency(i, board->getAsicFrequency(i)));
+           ESP_LOGI(TAG, "Setting frequency for ASIC %d to %dMHz", i, Config::getAsicFrequency(board->getAsicFrequency(i)));
            Config::setAsicFrequency(i, frequency);
        } else {
           const auto strKey = "frequency_" + std::to_string(i);
