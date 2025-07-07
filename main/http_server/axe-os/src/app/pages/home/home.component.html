@@ -210,7 +210,6 @@
               </ng-container>
               <!-- ASIC Contribution, all frequencies identical -->
               <div class="col-6" *ngIf="identicalAsicFreqs">
-                <div>{{ formattedAsicContributions }}</div>
                 <app-gauge [value]="info.frequency" [format]="'1.0-0'" [min]="100" [max]="800" [unit]="'MHz'"
                   [label]="'ASIC Frequency'"></app-gauge>
               </div>

@@ -43,10 +43,6 @@ export class HomeComponent implements AfterViewChecked, OnInit, OnDestroy {
   private localStorageKey = 'chartData';
   private timestampKey = 'lastTimestamp'; // Key to store lastTimestamp
 
-  get formattedAsicContributions(): string {
-    return this.asicContribution.map(cont => `${cont}%`).join(' / ');
-  }
-
   ngAfterViewChecked(): void {
     // Ensure chart is initialized only once when the canvas becomes available
     if (!this.chartInitialized && this.ctx && this.ctx.nativeElement) {
