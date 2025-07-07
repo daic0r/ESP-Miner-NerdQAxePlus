@@ -212,7 +212,10 @@ export class HomeComponent implements AfterViewChecked, OnInit, OnDestroy {
 
     this.expectedHashRate$ = this.info$.pipe(map(info => {
       if (!info) return 0; // Return 0 if no info
-      return Math.floor(info.frequency * ((info.smallCoreCount * info.asicCount) / 1000));
+      const expected = info.frequencies.reduce((acc: number, freq: number) => {
+        return acc + (freq * (info.smallCoreCount * info.asicCount) / 1000);
+      }, 0);
+      return Math.floor(expected / info.frequencies.length);
     }));
 
     this.quickLink$ = this.info$.pipe(
