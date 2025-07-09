@@ -222,13 +222,19 @@ export class EditComponent implements OnInit {
   }
 
   private updateFrequencyControlState(): void {
-    for (let i = 0; i < this.asicCount; ++i) {
-      if (this.form.controls[`frequency_${i}`].value !== this.form.controls['frequency'].value) {
-        this.form.controls.frequency.disable({ emitEvent: false });
-        return;
+    let allEqual = true;
+    for (let i = 1; i < this.asicCount; ++i) {
+      if (this.form.controls[`frequency_${i}`].value !== this.form.controls[`frequency_0`].value) {
+        allEqual = false;
+        break;
       }
     }
-    this.form.controls.frequency.enable({ emitEvent: false });
+    if (allEqual) {
+      this.form.controls.frequency.setValue(this.form.controls[`frequency_0`].value, { emitEvent: false });
+      this.form.controls.frequency.enable({ emitEvent: false });
+    } else {
+      this.form.controls.frequency.disable({ emitEvent: false });
+    }
   }
 
   private updatePerAsicFreqs(): void {
